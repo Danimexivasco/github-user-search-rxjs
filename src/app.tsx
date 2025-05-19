@@ -1,5 +1,7 @@
 
-import { useRef } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
+import { Toaster, toast } from "sonner";
+
 import {
   IconButton,
   InputAdornment,
@@ -21,25 +23,47 @@ import Dialog from "./components/Dialog";
 import PreactIcon from "./components/icons/PreactLogo";
 import MaterialUIIcon from "./components/icons/MaterialUILogo";
 import ViteIcon from "./components/icons/ViteLogo";
+import DebounceSlider from "./components/DebounceSlider";
 
-function searchGitHubUsers(query: string): Promise<{ items: GitHubUser[] }> {
-  return fetch(`https://api.github.com/search/users?q=${query}`).then((res) =>
-    res.json()
-  );
+async function searchGitHubUsers(query: string): Promise<{ items: GitHubUser[] }> {
+  try {
+    const res = await fetch(`https://api.github.com/search/users?q=${query}`);
+
+    if (!res.ok) {
+      toast.error(`Something went wrong (HTTP ${res.status}). Please try again in a few minutes.`);
+      return {
+        items: []
+      };
+    }
+    const json = await res.json();
+
+    return json;
+  } catch {
+    toast.error("Something went wrong. Please try again in a few minutes.");
+
+    return {
+      items: []
+    };
+  }
 }
 
+// TODO: Add pagination for more results
 export function App() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [debounceValue, setDebounceValue] = useState(200);
 
-  const { results, loading, query, setQuery, clearInput } = useReactiveSearch<GitHubUser>(
+  const { results, loading, hasSearched, query, setQuery, clearInput } = useReactiveSearch<GitHubUser>(
     inputRef,
-    searchGitHubUsers
+    searchGitHubUsers,
+    {
+      debounce: debounceValue
+    }
   );
 
   return (
     <Stack
       direction="column"
-      spacing={8}
+      spacing={6}
       maxWidth={"lg"}
       justifyContent={"center"}
       alignItems={"center"}
@@ -53,6 +77,7 @@ export function App() {
         sm: 4
       }}
     >
+      <Toaster richColors/>
       <Dialog
         triggerText="About the App"
         title="GitHub User Search"
@@ -65,6 +90,9 @@ export function App() {
             <Typography
               variant="subtitle1"
               gutterBottom
+              sx={{
+                marginTop: 2
+              }}
             >
               <strong>Features:</strong>
             </Typography>
@@ -98,7 +126,10 @@ export function App() {
               alignItems="center"
               gap={1}
               sx={{
-                fontSize: "1.5rem"
+                fontSize: {
+                  xs: "1rem",
+                  sm: "1.5rem"
+                }
               }}
             >
               <Tooltip
@@ -167,53 +198,68 @@ export function App() {
         </Link>
       </Typography>
 
-      <TextField
-        inputRef={inputRef}
-        value={query}
-        onChange={(e) => setQuery((e.target as HTMLInputElement)?.value ?? "")}
-        label="Search GitHub users"
-        variant="outlined"
-        autoComplete="off"
-        sx={{
-          marginBottom: "1rem",
-          width:        "100%",
-          maxWidth:     "sm"
-        }}
-        slotProps={{
-          input: {
-            endAdornment: inputRef.current?.value ? (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={clearInput}
-                  aria-label="clear input"
-                >
-                  <ClearIcon />
-                </IconButton>
-              </InputAdornment>
-            ) : null
-          }
-        }}
-      />
-
-      {!query &&
       <Stack
-        alignItems="center"
-        onClick={() => inputRef.current?.focus()}
+        spacing={4}
+        maxWidth={"sm"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        marginX={"auto"}
         sx={{
-          cursor: "pointer"
+          width: "100%"
         }}
       >
-        <ArrowUpwardIcon className="animate-bounce"/>
-        <Typography
-          variant="h5"
-          component={"p"}
-          textAlign={"center"}
-        >
-          Start typing to search GitHub users
-        </Typography>
+        <DebounceSlider
+          debounceValue={debounceValue}
+          onChange={setDebounceValue}
+        />
+
+        <TextField
+          inputRef={inputRef}
+          value={query}
+          onChange={(e) => setQuery((e.target as HTMLInputElement)?.value ?? "")}
+          label="Search GitHub users"
+          variant="outlined"
+          autoComplete="off"
+          sx={{
+            marginBottom: "1rem",
+            width:        "100%"
+          }}
+          slotProps={{
+            input: {
+              endAdornment: inputRef.current?.value ? (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={clearInput}
+                    aria-label="clear input"
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </InputAdornment>
+              ) : null
+            }
+          }}
+        />
+
+        {!query &&
+          <Stack
+            alignItems="center"
+            onClick={() => inputRef.current?.focus()}
+            sx={{
+              cursor: "pointer"
+            }}
+          >
+            <ArrowUpwardIcon className="animate-bounce"/>
+            <Typography
+              variant="h5"
+              component={"p"}
+              textAlign={"center"}
+            >
+              Start typing to search GitHub users
+            </Typography>
+          </Stack>
+        }
       </Stack>
-      }
-      {results.length === 0 && !loading && query && <p>No users found</p>}
+      {query && hasSearched && !loading && results.length === 0 && <p>No users found</p>}
       {results.length > 0 && (
         <UserList
           users={results}
