@@ -11,6 +11,9 @@ import {
 export type SearchResult<T> = {
   results: T[];
   loading: boolean;
+  query: string;
+  setQuery: (_query: string) => void;
+  clearInput: () => void;
 };
 
 export function useReactiveSearch<T>(
@@ -19,6 +22,16 @@ export function useReactiveSearch<T>(
 ): SearchResult<T> {
   const [results, setResults] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const clearInput = () => {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+    setQuery("");
+    setResults([]);
+    inputRef.current?.blur();
+  };
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -28,14 +41,18 @@ export function useReactiveSearch<T>(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((query) => {
-        if (query === "") {
+        if (query.length <= 0) {
           setResults([]);
+          setQuery(query);
+
           return of({
             items: []
           });
         }
 
+        setQuery(query);
         setLoading(true);
+
         return searchFn(query);
       }),
       catchError((err, caught) => {
@@ -55,6 +72,9 @@ export function useReactiveSearch<T>(
 
   return {
     results,
-    loading
+    loading,
+    query,
+    setQuery,
+    clearInput
   };
 }
