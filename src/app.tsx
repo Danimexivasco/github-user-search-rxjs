@@ -3,6 +3,7 @@ import { useRef, useState } from "preact/hooks";
 import { Toaster, toast } from "sonner";
 
 import {
+  Box,
   IconButton,
   InputAdornment,
   Link,
@@ -35,6 +36,7 @@ async function searchGitHubUsers(query: string): Promise<{ items: GitHubUser[] }
         items: []
       };
     }
+
     const json = await res.json();
 
     return json;
@@ -48,6 +50,7 @@ async function searchGitHubUsers(query: string): Promise<{ items: GitHubUser[] }
 }
 
 // TODO: Add pagination for more results
+// TODO: Fix no users flicker
 export function App() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [debounceValue, setDebounceValue] = useState(200);
@@ -254,13 +257,24 @@ export function App() {
               component={"p"}
               textAlign={"center"}
             >
-              Start typing to search GitHub users
+              Start{" "}
+              <Box
+                component="span"
+                sx={{
+                  fontFamily:  "Caveat, monospace",
+                  fontSize:    "2.2rem",
+                  marginRight: "0.3rem"
+                }}
+              >
+                typing
+              </Box>{" "}
+              to search GitHub users
             </Typography>
           </Stack>
         }
       </Stack>
       {query && hasSearched && !loading && results.length === 0 && <p>No users found</p>}
-      {results.length > 0 && (
+      {query && results.length > 0 && (
         <UserList
           users={results}
           query={query}
