@@ -1,4 +1,4 @@
-# GitHub User Search with RxJS, Preact & MUI
+# GitHub User Search 🔎 (Vite, RxJS, Preact & MUI)
 A fast and responsive GitHub user search app built with [Preact](https://preactjs.com/), [RxJS](https://rxjs.dev/), and [Material UI](https://mui.com/). It features real-time search with debounced input, API integration, and a clean, responsive UI. Built using [Vite](https://vitejs.dev/) for lightning-fast development.
 
 ### Features:
