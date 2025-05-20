@@ -169,6 +169,8 @@ export default function UserCard({ user, loading }: UserCardProps) {
                 size="small"
                 variant="contained"
                 href={`${user?.html_url}?tab=repositories`}
+                target={"_blank"}
+                rel="noopener noreferrer"
               >See Repos
               </Button>
             </CardActions>
