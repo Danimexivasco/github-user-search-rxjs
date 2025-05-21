@@ -25,6 +25,9 @@ import PreactIcon from "./components/icons/PreactLogo";
 import MaterialUIIcon from "./components/icons/MaterialUILogo";
 import ViteIcon from "./components/icons/ViteLogo";
 import DebounceSlider from "./components/DebounceSlider";
+import VitestIcon from "./components/icons/VitestLogo";
+import TestingLibIcon from "./components/icons/TestingLibraryLogo";
+import PlaywrightIcon from "./components/icons/PlaywrightLogo";
 
 async function searchGitHubUsers(query: string): Promise<{ items: GitHubUser[] }> {
   try {
@@ -89,13 +92,14 @@ export function App() {
             <Typography gutterBottom>
               A fast and responsive GitHub user search app built with <Link href="https://preactjs.com/">Preact</Link>, <Link href="https://rxjs.dev/">RxJS</Link>, and <Link href="https://mui.com/">Material UI</Link>. It features real-time search with debounced input, API integration, and a clean, responsive UI. Built using <Link href="https://vitejs.dev/">Vite</Link> for lightning-fast development.
             </Typography>
+            <Typography gutterBottom>
+              It also have tests written with <Link href="https://vitest.dev/">Vitest</Link> and <Link href="https://testing-library.com/preact">@testing-library/preact</Link> for integration tests and <Link href="https://playwright.dev/">Playwright</Link> for **E2E tests**. Both are used in GitHub Actions for CI/CD.
+            </Typography>
+            <br/>
 
             <Typography
               variant="subtitle1"
               gutterBottom
-              sx={{
-                marginTop: 2
-              }}
             >
               <strong>Features:</strong>
             </Typography>
@@ -115,12 +119,11 @@ export function App() {
               <li>⚛️ Built with Preact for minimal bundle size</li>
               <li>🚀 Powered by Vite for instant development builds</li>
             </ul>
+            <br />
+
             <Typography
               variant="subtitle1"
               gutterBottom
-              sx={{
-                marginTop: 2
-              }}
             >
               <strong>Stack:</strong>
             </Typography>
@@ -132,7 +135,8 @@ export function App() {
                 fontSize: {
                   xs: "1rem",
                   sm: "1.5rem"
-                }
+                },
+                overflow: "auto"
               }}
             >
               <Tooltip
@@ -168,6 +172,33 @@ export function App() {
               >
                 <IconButton size="large">
                   <MaterialUIIcon />
+                </IconButton>
+              </Tooltip>
+              +
+              <Tooltip
+                title="Vitest"
+                arrow
+              >
+                <IconButton size="large">
+                  <VitestIcon />
+                </IconButton>
+              </Tooltip>
+              +
+              <Tooltip
+                title="@testing-library/preact"
+                arrow
+              >
+                <IconButton size="large">
+                  <TestingLibIcon />
+                </IconButton>
+              </Tooltip>
+              +
+              <Tooltip
+                title="Playwright"
+                arrow
+              >
+                <IconButton size="large">
+                  <PlaywrightIcon />
                 </IconButton>
               </Tooltip>
             </Stack>
