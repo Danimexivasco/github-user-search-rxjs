@@ -10,7 +10,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:codegen": "playwright codegen http://localhost:5173",
-    "test:unit": "vitest"
+    "test:integration": "vitest integration"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -27,9 +27,16 @@
     "@danimexivasco/eslint-config": "^1.0.17",
     "@playwright/test": "^1.52.0",
     "@preact/preset-vite": "^2.10.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/preact": "^3.2.4",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.15.19",
     "eslint": "^9.26.0",
+    "happy-dom": "^17.4.7",
+    "jsx-async-runtime": "^1.0.1",
     "typescript": "~5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
   }
 }
