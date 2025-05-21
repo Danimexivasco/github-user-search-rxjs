@@ -1,4 +1,4 @@
-name: E2E + Integration Tests
+name: CI Tests
 
 on:
   push:
