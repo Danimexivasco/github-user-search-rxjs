@@ -1,7 +1,7 @@
 import { test, expect } from "./fixtures";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:5173/");
+  await page.goto("/");
 });
 
 test.describe("Search", () => {
@@ -84,7 +84,7 @@ test.describe("Debounce", () => {
     await page.getByRole("button", {
       name: "Delay search requests while"
     }).click();
-    expect(page.getByText("Delay search requests while")).toBeVisible();
+    await expect(page.getByText("Delay search requests while")).toBeVisible();
   });
 
   test("should debounce the search", async ({ page }) => {
